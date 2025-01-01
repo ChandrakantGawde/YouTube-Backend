@@ -19,3 +19,11 @@ https://mrkandreev.name/snippets/gitignore-generator/
 For importing modules we use "Type": "module" in package.json  
 ----------------------------------------------
 Prettier :- here we add code standrds that follws by team for example how to use quote, spacing after brakets, tab width
+----------------------------------------------
+Use mongoose, express, dotenv dependencies
+
+1) When we dealing with data base we have chances that we get error so better way we have to write code in try catch or promises.
+2) Database is allways in another continant, we select as mumbai but soppose it code base in US, so it take time to get data so better way use async await
+
+as soon as posible we have to import and configure dotenv in application as thy work properly 
+
