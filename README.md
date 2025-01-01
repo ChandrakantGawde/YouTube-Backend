@@ -17,3 +17,5 @@ https://mrkandreev.name/snippets/gitignore-generator/
 .env :- files that are not push on git 
 ----------------------------------------------
 For importing modules we use "Type": "module" in package.json  
+----------------------------------------------
+Prettier :- here we add code standrds that follws by team for example how to use quote, spacing after brakets, tab width
