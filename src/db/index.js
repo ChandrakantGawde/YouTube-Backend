@@ -11,3 +11,6 @@ const connectDB = async ()=> {
     }
 }
 export default connectDB;
+
+// here in this project we use async handler many time 
+// so better way we use customize function and use it every time 

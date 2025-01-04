@@ -1,12 +1,25 @@
 //require('dotenv').config({path: './env'}); // this not a god practice
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
+import { app } from "./app.js";
 
 dotenv.config({
     path: "./env"
 })
 
-connectDB()
+connectDB() // this function return the promise with data base connected 
+.then( () => { // after databse connection we have on port 
+    app.on("error", (error)=> {
+        console.log( "error", error);
+        throw error;
+     })
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(`Server is runnig at port ${process.env.PORT}`)
+    })
+})
+.catch( (error) => {
+    console.log("Database is not connected !", error)
+})
 
 
 
