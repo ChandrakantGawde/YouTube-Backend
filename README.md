@@ -67,3 +67,15 @@ so node js provide the predefine class that is Error, so we can extends this cla
 
 but at the time of response we get response from express.js so it not provide any class so 
 we have to create the own 
+----------------------------------------------
+
+We use mongoose-aggregate : - for aggregation quries, use for complex queries ( npm i mongoose-aggregate-paginate-v2)
+----------------------------------------------
+For manage password we use 
+1) bcrypt - A bcrypt library for Node.js
+or
+2) bcryptjs - Optimized brycpt in plain javaScript zero dependencies, compatible to 'bcrypt'.
+
+it help us to hash the password
+
+here we generate AccessToken and RefreshToken
