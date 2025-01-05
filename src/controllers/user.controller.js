@@ -18,8 +18,8 @@ const registerUser = asyncHandler( async (req, res) => {
     // return res
 
     const { username, email, fullName, password } = req.body ;
-    console.log("Got Email from User ", email);
- 
+    console.log("Request body ", req.body);
+    console.log("Request files ", req.files);
     // here we apply some method while creating array of req.body filds and apply validation 
 
     // if([ username, email, fullName, password ].some( (filds) => filds.trim === " " ) ){
@@ -39,7 +39,7 @@ const registerUser = asyncHandler( async (req, res) => {
     }  
 
     // validation is ok then check user allready exists
-    const existedUser = User.finOne({
+    const existedUser = await User.findOne({
         $or: [{username}, {email}]
     });
 
@@ -49,7 +49,12 @@ const registerUser = asyncHandler( async (req, res) => {
 
     // get image path from file
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocaalPath = req.files?.coverImage[0]?.path;
+    //const coverImageLocaalPath = req.files?.coverImage[0]?.path;
+
+    let coverImageLocaalPath ;
+    if( req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+        coverImageLocaalPath = req.files?.coverImage[0]?.path;
+    }
 
     if(!avatarLocalPath){
         throw new ApiError( 400, "Avatar file is required")
@@ -72,9 +77,11 @@ const registerUser = asyncHandler( async (req, res) => {
         password: password,
         username: username.toLowerCase()
     })
+    console.log("user", user)
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken"); // remove password and refreshToken 
-                                                                                        // while returning the user 
+    console.log("createdUser", createdUser)                                                                                    // while returning the user 
+
     if(!createdUser){
         throw new ApiError( 500, "Something went wrong while creating the user")
     }
