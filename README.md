@@ -102,3 +102,8 @@ here we handle file using multer but we fllow 2 steps process
 
 for that we use commen folder and reuse it every time 
 
+here we create diskStorage it has object with 2 methods destination and filename, each method had callback function
+
+-----------------------------------------------
+Http headers - key value paires send in an http request or response it provide extra information called metadata
+Http Methods - perform operstions 
