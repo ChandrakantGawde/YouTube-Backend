@@ -51,7 +51,7 @@ const userSchema = new Schema(
     }
 );
 
-// use for crypting the password - crypto hash node js
+// use for crypting the password - bcrypt 
 // before the user saves, this function runs and hashes the password
 userSchema.pre("save", async function (next) {  // here we not use arrow function because here we want this context
 
@@ -65,7 +65,7 @@ userSchema.pre("save", async function (next) {  // here we not use arrow functio
     next();
 });
 
-// now here we store the password in the form of hash and at the time of login user enter charactors 
+// now here we store the password in the form of hash and at the time of login, user enter password charactors 
 // here we have to decryp the password 
 
 // use coustomise method
