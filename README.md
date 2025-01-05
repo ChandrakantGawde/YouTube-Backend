@@ -107,3 +107,7 @@ here we create diskStorage it has object with 2 methods destination and filename
 -----------------------------------------------
 Http headers - key value paires send in an http request or response it provide extra information called metadata
 Http Methods - perform operstions 
+
+-----------------------------------------------
+apply userModal validations with express-validator 
+here we create saprate middleware same as multer name as validateRegisterUser 
