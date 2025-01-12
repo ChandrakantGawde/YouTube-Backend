@@ -5,6 +5,24 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
+const generateAccessAndRefreshTokens = async (userId) => { // create sampre method for tokens
+    
+    try{
+       const user = await User.findById(userId);
+       const accessToken = user.generateAccessToken()
+       const refreshToken = user.generateRefreshToken()
+
+       user.refreshToken = refreshToken; // update that refresh token in user 
+       await user.save({validateBeforeSave: false});
+       //here if we save user then other parameter triggred, in scema we use required filds 
+       // validateBeforeSave save user as it is 
+    } catch (error) {
+        throw new ApiError( 500, "Somethig went wrong while generating refresh and access token");
+    }
+
+    return { accessToken, refreshToken}
+}
+
 const registerUser = asyncHandler( async (req, res) => {
     
     //  get user details from frontend
@@ -91,4 +109,87 @@ const registerUser = asyncHandler( async (req, res) => {
     )
 });
 
-export { registerUser }
+const loginUser = asyncHandler( async (req, res) => {
+
+    // get the username, email and password from reqbody
+    // find the user 
+    // check paasword
+    // access and refresh token
+    // send cookie
+
+    const {email, username, password} = req.body;
+
+    if( !email || !username){
+        throw new ApiError(400, "Username or Password is required")
+    };
+
+    const user = await User.findOne({
+        $or: [{email}, {username}]
+    });
+
+    if(!user){
+        throw new ApiError(404, "user does not exist");
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid user credentials")
+    };
+
+    const { accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)// create tokens with saprate method
+    // destructure the object 
+    const loggenedInUser = await User.findById(user._id).select("-password -refreshToken");// remove this filds from return object
+
+
+    // here we have to send cookies to user 
+    // here we have one problem that we can modify the cookie in frontend it a default dehaviour of cookie
+
+    const options = {    // hence we set options that cookie can not be modifyed on frontend
+        httpOnly : true, // it modify only on server
+        secure : true
+    };
+
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(
+            200,
+            {
+                user: loggenedInUser, accessToken, refreshToken
+                       // here we pass seprate accesToken and refreshToken if user want to store it local storage
+            }, 
+            "User logged In Sucessfully"
+        )
+    )
+});
+
+const logoutUser = asyncHandler( async (req, res) => {
+    // if we have to logout user then we clear the cookies and allso clear the refreshToken present in user schema
+
+    await User.findByIdAndUpdate(req.user._id,{ // here we use findByIdAndUpdate because in normal method we have to save user after update 
+        $set: {                           // and this method save user automatically 
+            refreshToken : undefined
+        }
+    },
+    {
+        new : true   // add extra parameter that gives entire updated object of User
+    });
+
+    const options = {    
+       httpOnly: true,
+       secure: true
+    }
+
+    return res.status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json( new ApiResponse(200, {}, "User logged Out"));
+    
+});
+
+export { registerUser,
+    loginUser,
+    logoutUser
+ }

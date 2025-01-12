@@ -49,12 +49,12 @@ const userSchema = new Schema(
     {
         timestamps: true
     }
-);
+); 
 
 // use for crypting the password - bcrypt 
 // before the user saves, this function runs and hashes the password
 userSchema.pre("save", async function (next) {  // here we not use arrow function because here we want this context
-
+                                                // and arrow function dosent have this 
     // now here every time user change any fild this password encrypted 
     // this is not a good approtch we have to stop that
     
