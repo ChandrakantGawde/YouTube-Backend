@@ -111,3 +111,18 @@ Http Methods - perform operstions
 -----------------------------------------------
 apply userModal validations with express-validator 
 here we create saprate middleware same as multer name as validateRegisterUser 
+
+-----------------------------------------------
+loginUser at that time genrate refreshToken and AccessToken for that we create saprate methos and now call them 
+while returning response pass cookie with option so its not editable on frontend
+
+-----------------------------------------------
+
+Create middleware name as Auth to check user is Authorized or not for sending request
+1) implement logout with that auth middleware 
+2) get AccessToken from cookies or header that is Bearer present in Authorization 
+3) we have to decodedToken and get _id from it and get user
+4) pass user to next method
+
+clear cookie and refreshToken 
+

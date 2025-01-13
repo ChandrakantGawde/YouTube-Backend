@@ -7,20 +7,20 @@ import { ApiResponse } from "../utils/apiResponse.js";
 
 const generateAccessAndRefreshTokens = async (userId) => { // create sampre method for tokens
     
-    try{
-       const user = await User.findById(userId);
-       const accessToken = user.generateAccessToken()
-       const refreshToken = user.generateRefreshToken()
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
 
-       user.refreshToken = refreshToken; // update that refresh token in user 
-       await user.save({validateBeforeSave: false});
-       //here if we save user then other parameter triggred, in scema we use required filds 
-       // validateBeforeSave save user as it is 
+        return { accessToken, refreshToken };
     } catch (error) {
         throw new ApiError( 500, "Somethig went wrong while generating refresh and access token");
     }
 
-    return { accessToken, refreshToken}
 }
 
 const registerUser = asyncHandler( async (req, res) => {
@@ -119,7 +119,7 @@ const loginUser = asyncHandler( async (req, res) => {
 
     const {email, username, password} = req.body;
 
-    if( !email || !username){
+    if( !(email || username)){
         throw new ApiError(400, "Username or Password is required")
     };
 

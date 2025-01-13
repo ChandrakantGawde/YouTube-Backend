@@ -69,12 +69,12 @@ userSchema.pre("save", async function (next) {  // here we not use arrow functio
 // here we have to decryp the password 
 
 // use coustomise method
-userSchema.methods.isPasswordCorrect = async function (password) { // get user entered password from user
-    return await bcrypt.compare(password, this.password); // compare user entered password and compare with the database password 
+userSchema.methods.isPasswordCorrect = async function(password) { // get user entered password from user
+    return await bcrypt.compare(password, this.password);// compare user entered password and compare with the database password 
 }   // here we get ture or false 
 
 
-userSchema.method.generateAccessToken = function() {   
+userSchema.methods.generateAccessToken = function() {   
     return jwt.sign(   // jwt.sign( payload, secrt, expiresIn)
         {
             _id: this._id,
@@ -89,7 +89,7 @@ userSchema.method.generateAccessToken = function() {
     )
 };
 
-userSchema.method.generateRefreshToken = function() { 
+userSchema.methods.generateRefreshToken = function() { 
     return jwt.sign(   // jwt.sign( payload, secrt, expiresIn)
         {
             _id: this._id,

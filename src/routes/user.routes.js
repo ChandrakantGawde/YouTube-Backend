@@ -15,7 +15,7 @@ router.route("/register").post(
   registerUser
 );
 
-router.route("/login").post(loginUser);
+router.route("/login").post( loginUser);
 
 //Secured routs 
 router.route("/logout").post( verifyJWT, logoutUser); // add verifyJWT as middleware to check user is Authrorized or not

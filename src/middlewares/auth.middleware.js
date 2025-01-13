@@ -1,6 +1,6 @@
-import { User } from "../models/user.model";
-import { ApiError } from "../utils/apiError";
-import { asyncHandler } from "../utils/asyncHandler";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/apiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
                                            // ( res, res, next) here sometime we not use res hence we use _ 
@@ -25,7 +25,7 @@ export const verifyJWT = asyncHandler( async (req, _ , next) => {
 
          req.user = user;
          next() // this is the middleware thats why we use next 
-         
+
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid Access Token");
     }
