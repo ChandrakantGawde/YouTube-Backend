@@ -123,7 +123,13 @@ Create middleware name as Auth to check user is Authorized or not for sending re
 3) we have to decodedToken and get _id from it and get user
 4) pass user to next method
 
-clear cookie and refreshToken       // while login user getting error that accessToken not genrated 1.5hr bug fix 
+clear cookie and refreshToken       // while login user getting error that accessToken not genrated, 1.5hr bug fix 
 
 ------------------------------------------------
+AccessToken - keep it at user end used to authenticate and authorize a user, short lived for example minutes to a few hours 
+RefreshToken/ seccion storage - store in database used to obtain a new access token without requiring the user to log in again, long lived for example days, weeks, or months
+
+refreshAccessToken : - get token from user and verify with database token 
+user has Encoded jwt token but in database we have decoded jwt token consist of header, payload and verify signature 
+if user refreshTOken and database user refreshToken match genrate new tokens
 
