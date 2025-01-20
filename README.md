@@ -133,3 +133,9 @@ refreshAccessToken : - get token from user and verify with database token
 user has Encoded jwt token but in database we have decoded jwt token consist of header, payload and verify signature 
 if user refreshTOken and database user refreshToken match genrate new tokens
 
+-------------------------------------------------
+Subscription model :- here we have channel as users and subscriber as users
+
+
+
+
