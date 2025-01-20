@@ -136,6 +136,9 @@ if user refreshTOken and database user refreshToken match genrate new tokens
 -------------------------------------------------
 Subscription model :- here we have channel as users and subscriber as users
 
+changeCurrentPassword :- get oldPassword and nuePassword we have authMiddleware in that we have user so 
+we have to match the password isPasswordCorrect if passeord correct then update newpassword with oldPassword and return the message 
 
+We have another senario that we have to get current User in that we can use auth middleware 
 
 
