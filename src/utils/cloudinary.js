@@ -17,7 +17,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 
         // if file upload 
         console.log("File is upload on cloudinary ", response)
-        fs.unlinkSync(localFilePath); 
+        fs.unlinkSync(localFilePath); // remove from local sysytem
         return response;
 
     } catch (error){
@@ -25,6 +25,23 @@ const uploadOnCloudinary = async (localFilePath) => {
 
          fs.unlinkSync(localFilePath);  
          return null ;
+    }
+}
+
+const deleteFileFromCloudinary = async (localFilePath) => {
+
+    try {
+        const result = await cloudinary.uploader.destroy(localFilePath,  { resource_type : "auto"})
+  
+        console.log("AfterFile Delete Result ", result)
+        if(result){
+           return true;
+        } else {
+           return false;
+        }
+
+    } catch (error) {
+        return false;
     }
 }
 
