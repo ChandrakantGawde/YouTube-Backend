@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { validationResult } from "express-validator";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFileFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js"; 
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
@@ -334,6 +334,8 @@ const updateUserCoverImage = asyncHandler( async (req, res) => {
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
     if(coverImage){
+       const oldCoverImage = await User.findById(req.user?._id).select('coverImage');
+       deleteFileFromCloudinary(oldCoverImage);
         await User.findByIdAndUpdate(req.user?._id,{ $unset: { coverImage: ""}},{ new: true})
     } else {
         throw new ApiError(400, "Error while uploading avatar");
