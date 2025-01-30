@@ -145,3 +145,31 @@ updateAccountDetails, updateUserAvatar, updateUserCoverImage
 --------------------------------------------------
 In Subscription model - we find Channel from Subscriber and Subscribers from Channels because they are interConnected 
 for every subscriber the new object created 
+
+---------------------------------------------------
+Mongodb aggregation pipelines :-    consist of one or more stages that process documents
+1) each stage perform operation on input document 
+2) the document that are output from a stage pass to the input of the next stage 
+3) Each stage performs a specific task, such as filtering, grouping, sorting, or projecting
+4) The aggregation pipeline starts with the .aggregate() method, followed by an array of stages
+
+join : - 
+db.orders.aggregate([
+   {
+      $lookup: {
+         from: "customers",          // Foreign collection
+         localField: "customerId",   // Field in the primary collection
+         foreignField: "_id",        // Field in the foreign collection
+         as: "customerDetails"       // Output array field
+      }
+   },
+   {
+      $addFields:{
+         // here we can add fild such as full name from combine the first middle and last name 
+      }
+   },
+   {
+     // here we can apply condition on data like filter, match  
+   }
+]);
+

@@ -357,7 +357,77 @@ const updateUserCoverImage = asyncHandler( async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user,  "Cover Image Updated Sucessfully"))
 });
 
+const getUserChannelProfile = asyncHandler( async (req, res) => {
+    const {username} = req.params;
 
+    if(!username?.trim()){
+        throw new ApiError(400, "Username is missing")
+    };
+
+    // here we use aggregation 
+    const channel = await User.aggregate([
+        {  
+            $match: {  // here we get the user its a aditional step decause we cheack username above 
+                username : username?.toLowerCase()
+            }
+        },
+        {
+            $lookup: {
+                from: "subscriptions",  // that is database collection name 
+                localField: "_id",      // subscriptions object id
+                foreignField: "channel",// we use as channel
+                as: "subscribers"       // add extra fild 
+
+            }
+        },
+        {
+            $lookup: {
+                from: "subscriptions",  // that is database collection name 
+                localField: "_id",
+                foreignField: "subscriber",// we use as subscriber
+                as: "subscribedTo"
+
+            }
+        },
+        {
+            $addFields: { // here we add extra filds in User model
+                subscribersCount: {
+                    $size: "$subscribers"  
+                },
+                channelSubscribedToCount: {
+                    $size: "$subscribedTo"
+                },
+                isSubscribed: { // we have to cheack the that channel subscribed or not 
+                    $cond: {// add condition - in operator work with array and object 
+                        if: { $in: [req.user?._id, "$subscribers.subscriber"]},
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                fullName: 1,
+                username: 1,
+                subscribersCount: 1,
+                channelSubscribedToCount: 1,
+                isSubscribed: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1
+            }
+        }
+
+    ]);
+    console.log("channel", channel)
+
+    if(!channel?.length){
+        throw new ApiError(400, "Channel does not exists")
+    };
+
+    return res.status(200).json(200, channel[0], "User channel fetched successfully")
+});
 
 
 export { registerUser,
@@ -368,5 +438,6 @@ export { registerUser,
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateUserCoverImage
+    updateUserCoverImage,
+    getUserChannelProfile
  }
