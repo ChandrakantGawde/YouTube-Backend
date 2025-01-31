@@ -171,13 +171,13 @@ const logoutUser = asyncHandler( async (req, res) => {
     // if we have to logout user then we clear the cookies and allso clear the refreshToken present in user schema
 
     await User.findByIdAndUpdate(req.user._id,{ // here we use findByIdAndUpdate because in normal method we have to save user after update 
-        $set: {                           // and this method save user automatically 
-            refreshToken : undefined
+        $unset: {                           // and this method save user automatically 
+            refreshToken : 1 // this remove the fild from document
         }
     },
     {
         new : true   // add extra parameter that gives entire updated object of User
-    });
+    }); 
 
     const options = {    
        httpOnly: true,
