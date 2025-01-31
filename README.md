@@ -153,14 +153,14 @@ Mongodb aggregation pipelines :-    consist of one or more stages that process d
 3) Each stage performs a specific task, such as filtering, grouping, sorting, or projecting
 4) The aggregation pipeline starts with the .aggregate() method, followed by an array of stages
 
-join : - 
+join : -  simple lookup
 db.orders.aggregate([
    {
       $lookup: {
-         from: "customers",          // Foreign collection
-         localField: "customerId",   // Field in the primary collection
-         foreignField: "_id",        // Field in the foreign collection
-         as: "customerDetails"       // Output array field
+         from: "subscriptions", // Foreign collection
+         localField: "_id",   // Field in the primary collection
+         foreignField: "channel", // Field in the foreign collection
+         as: "subscribers"  // Output array field
       }
    },
    {
@@ -172,4 +172,10 @@ db.orders.aggregate([
      // here we can apply condition on data like filter, match  
    }
 ]);
+
+---------------------------------------------------
+Nested lookup :- when we use aggregation pipelines and if we have to do operation on _id then we have to convert it into id because the _id present in document is string and we have to convert it 
+
+but when we use normaly like we have to find or update using mongoose then it automatically convert.
+
 

@@ -5,6 +5,7 @@ import { deleteFileFromCloudinary, uploadOnCloudinary } from "../utils/cloudinar
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async (userId) => { // create sampre method for tokens
     
@@ -365,13 +366,18 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
     };
 
     // here we use aggregation 
+    // match user 
+    // use lookup and find subscriber of channel
+    // find user subscribed to
+    // add both count 
+    // use projection to display important data not all data 
     const channel = await User.aggregate([
         {  
             $match: {  // here we get the user its a aditional step decause we cheack username above 
                 username : username?.toLowerCase()
             }
         },
-        {
+        {  // simple lookup 
             $lookup: {
                 from: "subscriptions",  // that is database collection name 
                 localField: "_id",      // subscriptions object id
@@ -429,6 +435,61 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
     return res.status(200).json(200, channel[0], "User channel fetched successfully")
 });
 
+const getWatchHistory = asyncHandler( async ( req, res) => {
+     const user =  await User.aggregate([
+        {
+            $match: {  // here mongoose not work we have to directly deal with mongodb 
+                 _id: new mongoose.Types.ObjectId(req.user._id) // when we directly dealing with mongodb we use mongoose.Types.ObjectId
+            }                                               // but when we use it into schema then Schema.Types.ObjectId
+        },
+        {   // here we use inner pipeline
+            $lookup: { 
+                from: "videos",
+                localField: "watchHistory",
+                foreignField: "_id",
+                as: "watchHistory",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [    // here we have to get details from owner hence add another pipeline
+                                {
+                                   $project: {
+                                       fullName: 1,
+                                       username: 1,
+                                       avatar: 1
+                                   }
+                                }
+                            ]
+                        }
+                    },
+                    {   // here we get data in array now we have to pick data from 0th index 
+                        // this is complex task for frintend hance we set this in object form  
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"   // here is the object 
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+     ]);
+
+     return res 
+     .status(200)
+     .json(
+        new ApiResponse(
+            200,
+            user[0].watchHistory,
+            "Watch history fetched successfully"
+        )
+     );
+});
+
 
 export { registerUser,
     loginUser,
@@ -439,5 +500,6 @@ export { registerUser,
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
-    getUserChannelProfile
+    getUserChannelProfile,
+    getWatchHistory
  }
